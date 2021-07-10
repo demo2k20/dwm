@@ -6,4 +6,4 @@ pgrep -x unclutter > /dev/null || unclutter &
 pgrep -x mpd > /dev/null || mpd &
 xset s 300
 pgrep -x xss-lock > /dev/null || xss-lock -- lockscreen &
-pgrep -x dwmblocks > /dev/null && killall dwmblocks && dwmblocks || dwmblocks &
+pgrep -x dwmblocks > /dev/null && killall dwmblocks && setsid -f dwmblocks || setsid -f dwmblocks &
