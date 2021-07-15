@@ -1,0 +1,10 @@
+--- dwm.c
++++ dwm.c
+@@ -249,6 +266,7 @@ static Monitor *wintomon(Window w);
+ static int xerror(Display *dpy, XErrorEvent *ee);
+ static int xerrordummy(Display *dpy, XErrorEvent *ee);
+ static int xerrorstart(Display *dpy, XErrorEvent *ee);
++static void xrdb(const Arg *arg);
+ static void zoom(const Arg *arg);
+ 
+ /* variables */
