@@ -9,7 +9,7 @@ static const int smartgaps          = 0;        /* 1 means no outer gap when the
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const int user_bh            = 20;        /* 0 means default bar height */
-static const char *fonts[]          = { "DejaVu Sans Mono:size=9", "Font Awesome 5 Free Regular:size=8", "Font Awesome 5 Free Solid:size=8", "Font Awesome 5 Brands Regular:size=8" };
+static const char *fonts[]          = { "DejaVu Sans Mono:size=9", "Font Awesome 5 Free Solid:size=8" };
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
