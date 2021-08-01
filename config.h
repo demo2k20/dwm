@@ -11,7 +11,9 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const int user_bh            = 20;       /* 0 means default bar height */
 static const char *fonts[]          = { "DejaVu Sans Mono:size=9", "Font Awesome 5 Free Solid:size=8" };
 static char normbgcolor[]           = "#222222";
+static char urgentbgcolor[]         = "#ff0000";
 static char normbordercolor[]       = "#444444";
+static char urgentbordercolor[]     = "#ff0000";
 static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
 static char selbordercolor[]        = "#005577";
@@ -22,7 +24,7 @@ static char *colors[][3] = {
        /*               fg           bg              border          */
        [SchemeNorm] = { normfgcolor, normbgcolor,    normbordercolor },
        [SchemeSel]  = { selfgcolor,  selbgcolor,     selbordercolor  },
-       [SchemeUrg]  = { selfgcolor,  selbordercolor, selbordercolor  },
+       [SchemeUrg]  = { selfgcolor,  urgentbgcolor,  urgentbordercolor  },
 };
 
 /* alphas */
@@ -51,7 +53,7 @@ static const Rule rules[] = {
 /* layout(s) */
 static const float mfact     = 0.50; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
 
 static const Layout layouts[] = {
