@@ -11,7 +11,7 @@ static const int smartgaps          = 0;        /* 1 means no outer gap when the
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const int user_bh            = 18;       /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
-static const char *fonts[]          = { "Terminus:size=8" };
+static const char *fonts[]          = { "Terminus:size=8" , "JoyPixels:size=8" };
 static char normbgcolor[]           = "#222222";
 static char urgentbgcolor[]         = "#ff0000";
 static char normbordercolor[]       = "#444444";
@@ -28,7 +28,7 @@ static char *colors[][3] = {
 };
 
 /* tagging */
-static const char *tags[] = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
+static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
 	/* class       instance    title        tags mask     isfloating   monitor */
