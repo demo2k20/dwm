@@ -3,14 +3,14 @@
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const unsigned int gappih    = 8;        /* horizontal inner gap between windows */
-static const unsigned int gappiv    = 8;        /* vertical inner gap between windows */
-static const unsigned int gappoh    = 16;       /* horizontal outer gap between windows and screen edge */
-static const unsigned int gappov    = 16;       /* vertical outer gap between windows and screen edge */
+static const unsigned int gappih    = 4;        /* horizontal inner gap between windows */
+static const unsigned int gappiv    = 4;        /* vertical inner gap between windows */
+static const unsigned int gappoh    = 4;        /* horizontal outer gap between windows and screen edge */
+static const unsigned int gappov    = 4;        /* vertical outer gap between windows and screen edge */
 static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const int user_bh            = 18;       /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+static const int user_bh            = 16;       /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
 static const char *fonts[]          = { "Terminus:size=8" , "JoyPixels:size=8" };
 static char normbgcolor[]           = "#222222";
 static char urgentbgcolor[]         = "#ff0000";
@@ -71,7 +71,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_k,      incnmaster,     {.i = -1 } }, // Decrease number of masters
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} }, // Resize master window(s)
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} }, // Resize master window(s)
-	{ MODKEY,                       XK_a,      zoom,           {0} }, // Bring selected window to master
+	{ MODKEY,                       XK_a,      zoom,           {0} }, // Bring focused window to master
 	{ MODKEY,                       XK_q,      killclient,     {0} }, // Close focused window
     { MODKEY,                       XK_s,      view,           {0} }, // Switch between two most recently used tags
 	{ MODKEY,                       XK_e,      setlayout,      {0} }, // Switch between two most recently used layouts
