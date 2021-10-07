@@ -242,6 +242,7 @@ static void sigstatusbar(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static void tile(Monitor *);
+static void tagswapmon(const Arg *arg);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void togglefullscr(const Arg *arg);
@@ -261,6 +262,7 @@ static void updatetitle(Client *c);
 static void updatewindowtype(Client *c);
 static void updatewmhints(Client *c);
 static void view(const Arg *arg);
+static void warp(const Client *c);
 static Client *wintoclient(Window w);
 static Monitor *wintomon(Window w);
 static int xerror(Display *dpy, XErrorEvent *ee);
@@ -906,6 +908,7 @@ focusmon(const Arg *arg)
 	unfocus(selmon->sel, 0);
 	selmon = m;
 	focus(NULL);
+	warp(selmon->sel);
 }
 
 void
@@ -1505,6 +1508,8 @@ restack(Monitor *m)
 	}
 	XSync(dpy, False);
 	while (XCheckMaskEvent(dpy, EnterWindowMask, &ev));
+	if (m == selmon && (m->tagset[m->seltags] & m->sel->tags) && selmon->lt[selmon->sellt] != &layouts[2])
+		warp(m->sel);
 }
 
 void
@@ -1912,6 +1917,67 @@ tagmon(const Arg *arg)
 }
 
 void
+tagswapmon(const Arg *arg)
+{
+	Monitor *m;
+	Client *c, *sc = NULL, *mc = NULL, *next;
+
+	if (!mons->next)
+		return;
+
+	m = dirtomon(arg->i);
+
+	for (c = selmon->clients; c; c = next) {
+		next = c->next;
+		if (!ISVISIBLE(c))
+			continue;
+		unfocus(c, 1);
+		detach(c);
+		detachstack(c);
+		c->next = sc;
+		sc = c;
+	}
+
+	for (c = m->clients; c; c = next) {
+		next = c->next;
+		if (!ISVISIBLE(c))
+			continue;
+		unfocus(c, 1);
+		detach(c);
+		detachstack(c);
+		c->next = mc;
+		mc = c;
+	}
+
+	for (c = sc; c; c = next) {
+		next = c->next;
+		c->mon = m;
+		c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
+		attach(c);
+		attachstack(c);
+		if (c->isfullscreen) {
+			resizeclient(c, c->mon->mx, c->mon->my, c->mon->mw, c->mon->mh);
+			XRaiseWindow(dpy, c->win);
+		}
+	}
+
+	for (c = mc; c; c = next) {
+		next = c->next;
+		c->mon = selmon;
+		c->tags = selmon->tagset[selmon->seltags]; /* assign tags of target monitor */
+		attach(c);
+		attachstack(c);
+		if (c->isfullscreen) {
+			resizeclient(c, c->mon->mx, c->mon->my, c->mon->mw, c->mon->mh);
+			XRaiseWindow(dpy, c->win);
+		}
+	}
+
+	focus(NULL);
+	arrange(NULL);
+}
+
+void
 tile(Monitor *m)
 {
 	unsigned int i, n, h, r, oe = enablegaps, ie = enablegaps, mw, my, ty;
@@ -2315,6 +2381,28 @@ view(const Arg *arg)
 		selmon->tagset[selmon->seltags] = arg->ui & TAGMASK;
 	focus(NULL);
 	arrange(selmon);
+}
+
+void
+warp(const Client *c)
+{
+	int x, y;
+
+	if (!c) {
+		XWarpPointer(dpy, None, root, 0, 0, 0, 0, selmon->wx + selmon->ww/2, selmon->wy + selmon->wh/2);
+		return;
+	}
+
+	if (!getrootptr(&x, &y) ||
+	    (x > c->x - c->bw &&
+	     y > c->y - c->bw &&
+	     x < c->x + c->w + c->bw*2 &&
+	     y < c->y + c->h + c->bw*2) ||
+	    (y > c->mon->by && y < c->mon->by + bh) ||
+	    (c->mon->topbar && !y))
+		return;
+
+	XWarpPointer(dpy, None, c->win, 0, 0, 0, 0, c->w / 2, c->h / 2);
 }
 
 Client *
