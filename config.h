@@ -10,7 +10,7 @@ static const unsigned int gappov    = 24;       /* vertical outer gap between wi
 static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const int user_bh            = 16;       /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
+static const int user_bh            = 16;       /* 0 means that dwm will calculate bar height, >= 1 means that dwm will user_bh as bar height */
 static const char *fonts[]          = { "Terminus:size=8" , "JoyPixels:size=8" };
 static char normbgcolor[]           = "#222222";
 static char urgentbgcolor[]         = "#ff0000";
@@ -28,7 +28,7 @@ static char *colors[][3] = {
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "www", "dev", "sys", "doc", "vbox", "mus", "vid", "gfx", "chat" };
 
 static const Rule rules[] = {
 	/* class       instance    title        tags mask     isfloating   monitor */
@@ -83,8 +83,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_f,      togglefloating, {0} }, // Toggle floating for a window
 	{ MODKEY,                       XK_Tab,    focusmon,       {.i = +1 } }, // Focus next monitor
 	{ MODKEY|ShiftMask,             XK_Tab,    tagmon,         {.i = +1 } }, // Send window to next monitor
-	{ MODKEY|ControlMask,           XK_Tab,    tagswapmon,     {.i = +1 } }, // Swap currently selected workspaces with the next monitor
-//	{ MODKEY|ControlMask,           XK_period, tagswapmon,     {.i = -1 } },
+	{ MODKEY|ControlMask,           XK_Tab,    tagswapmon,     {.i = +1 } }, // Swap currently selected workspaces with next monitor
 	{ MODKEY,                       XK_F5,     xrdb,           {.v = NULL } }, // Reload xresources color settings
 	{ MODKEY|ShiftMask,             XK_minus,  togglegaps,     {0} }, // Toggle all gaps
 //	{ MODKEY|Mod4Mask,              XK_h,      incrgaps,       {.i = +1 } },
