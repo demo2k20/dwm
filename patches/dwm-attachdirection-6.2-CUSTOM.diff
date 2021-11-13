@@ -18,7 +18,7 @@ index 1c0b587..d7c089b 100644
  static const int nmaster     = 1;    /* number of clients in master area */
  static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 +static const int attachdirection = 0;    /* 0 default, 1 above, 2 aside, 3 below, 4 bottom, 5 top */
- 
+
  static const Layout layouts[] = {
  	/* symbol     arrange function */
 diff --git a/dwm.c b/dwm.c
@@ -31,7 +31,8 @@ index 9fd0286..2c1b143 100644
                                 * MAX(0, MIN((y)+(h),(m)->wy+(m)->wh) - MAX((y),(m)->wy)))
 -#define ISVISIBLE(C)            ((C->tags & C->mon->tagset[C->mon->seltags]))
 +#define ISVISIBLEONTAG(C, T)    ((C->tags & T))
-+#define ISVISIBLE(C)            ISVISIBLEONTAG(C, C->mon->tagset[C->mon->seltags])
++// Same as with the original patch, except it is compatible with the 6.1 sticky patch
++#define ISVISIBLE(C)            ISVISIBLEONTAG(C, C->mon->tagset[C->mon->seltags] || C->issticky)
  #define LENGTH(X)               (sizeof X / sizeof X[0])
  #define MOUSEMASK               (BUTTONMASK|PointerMotionMask)
  #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
@@ -58,7 +59,7 @@ index 9fd0286..2c1b143 100644
 @@ -407,6 +414,73 @@ attach(Client *c)
  	c->mon->clients = c;
  }
- 
+
 +void
 +attachabove(Client *c)
 +{
@@ -94,7 +95,7 @@ index 9fd0286..2c1b143 100644
 +	c->next = c->mon->sel->next;
 +	c->mon->sel->next = c;
 +}
-+ 
++
 +void
 +attachbottom(Client *c)
 +{
@@ -159,7 +160,7 @@ index 9fd0286..2c1b143 100644
 @@ -1193,6 +1285,16 @@ movemouse(const Arg *arg)
  	}
  }
- 
+
 +Client *
 +nexttagged(Client *c) {
 +	Client *walked = c->mon->clients;
@@ -227,6 +228,6 @@ index 9fd0286..2c1b143 100644
  					attachstack(c);
  				}
  				if (m == selmon)
--- 
+--
 2.26.2
 
