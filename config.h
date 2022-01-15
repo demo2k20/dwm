@@ -1,12 +1,16 @@
 /* See LICENSE file for copyright and license details. */
+#include <X11/XF86keysym.h>
+
+/* Variables */
+#define TERMINAL "st"
 
 /* appearance */
-static const unsigned int borderpx  = 2;        /* border pixel of windows */
+static const unsigned int borderpx  = 3;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const unsigned int gappih    = 20;        /* horiz inner gap between windows */
-static const unsigned int gappiv    = 10;        /* vert inner gap between windows */
-static const unsigned int gappoh    = 10;        /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov    = 30;        /* vert outer gap between windows and screen edge */
+static const unsigned int gappih    = 20;       /* horiz inner gap between windows */
+static const unsigned int gappiv    = 10;       /* vert inner gap between windows */
+static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
+static const unsigned int gappov    = 30;       /* vert outer gap between windows and screen edge */
 static       int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
@@ -27,19 +31,36 @@ static char *colors[][3] = {
         [SchemeUrg]  = { selfgcolor,  urgentbgcolor, urgentbordercolor },
 };
 
+/* Scratchpads */
+typedef struct {
+	const char *name;
+	const void *cmd;
+} Sp;
+const char *spcmd1[] = {TERMINAL, "-t", "spterm", "-g", "120x34", NULL };
+const char *spcmd2[] = {TERMINAL, "-t", "spfm", "-g", "144x41", "-e", "ranger", NULL };
+const char *spcmd3[] = {TERMINAL, "-t", "spcalc", "-g", "50x20", "-e", "bc", "-lq", NULL };
+const char *spcmd4[] = {TERMINAL, "-t", "spmix", "-g", "100x30", "-e", "pulsemixer", NULL };
+static Sp scratchpads[] = {
+	/* name          cmd  */
+	{"spterm",      spcmd1},
+	{"spranger",    spcmd2},
+	{"spcalc",      spcmd3},
+	{"spmix",       spcmd4},
+};
+
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
 	/* class       instance    title         tags mask     isfloating   monitor */
-	{ NULL,        NULL,       "spterm",     0,            1,           -1 },
-	{ NULL,        NULL,       "bcterm",     0,            1,           -1 },
-	{ NULL,        NULL,       "floatterm",  0,            1,           -1 },
-	{ NULL,        NULL,       "pulsemixer", 0,            1,           -1 },
 	{ "Steam",     NULL,       NULL,         0,            1,           -1 },
 	{ "zoom",      NULL,       NULL,         0,            1,           -1 },
 	{ "discord",   NULL,       NULL,         1 << 8,       0,           -1 },
 	{ "Element",   NULL,       NULL,         1 << 7,       0,           -1 },
+	{ NULL,        NULL,	   "spterm",     SPTAG(0),     1,           -1 },
+	{ NULL,        NULL,       "spfm",       SPTAG(1),     1,           -1 },
+	{ NULL,        NULL,       "spcalc",     SPTAG(2),     1,           -1 },
+	{ NULL,        NULL,       "spmix",      SPTAG(3),     1,           -1 },
 };
 
 /* layout(s) */
@@ -81,17 +102,72 @@ static const Layout layouts[] = {
 
 #define STATUSBAR "dwmblocks"
 
+/* helper for spawning shell commands in the pre dwm-5.0 fashion */
+#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+
+/* commands */
+static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-i", "-p", "Run", NULL };
+static const char *termcmd[]  = { TERMINAL, NULL };
+
 static Key keys[] = {
 	/* modifier                     key        function        argument */
+    /* Basic stuff */
+	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } }, // Terminal
+	{ MODKEY|ShiftMask,             XK_Return, togglescratch,  {.ui = 0 } }, // Scratchpad terminal
+    { MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } }, // Program launcher
+
+    /* Multimedia keys */
+    { 0, XF86XK_MonBrightnessUp,               spawn,          SHCMD ("xbacklight -inc 10") }, // Brightness up
+    { 0, XF86XK_MonBrightnessDown,             spawn,          SHCMD ("xbacklight -dec 10") }, // Brightness down
+    { 0, XF86XK_AudioRaiseVolume,              spawn,          SHCMD ("volume up") }, // Volume up
+    { 0, XF86XK_AudioLowerVolume,              spawn,          SHCMD ("volume down") }, // Volume down
+    { 0, XF86XK_AudioMute,                     spawn,          SHCMD ("volume toggle") }, // Volume toggle mute
+    { 0, XF86XK_AudioPlay,                     spawn,          SHCMD ("playerctl play-pause") }, // Media toggle play/pause
+    { 0, XF86XK_AudioNext,                     spawn,          SHCMD ("playerctl next") }, // Media play next
+    { 0, XF86XK_AudioPrev,                     spawn,          SHCMD ("playerctl previous") }, // Media play Previous
+    { 0, XF86XK_TouchpadToggle,                spawn,          SHCMD ("toggletouchpad") }, // Toggle touchpad
+    { 0, XF86XK_ScreenSaver,                   spawn,          SHCMD ("lockscreen") }, // Screensaver/lockscreen
+
+    /* Print screen functionality */
+    { 0,                            XK_Print,  spawn,          SHCMD ("screenshot --printscreen") }, // Print screen
+    { ShiftMask,                    XK_Print,  spawn,          SHCMD ("screenshot --snipscreen") }, // Snip screen
+    { Mod1Mask,                     XK_Print,  spawn,          SHCMD ("screenshot --snipactive") }, // Snip active window
+
+    /* Basic programs */
+    { MODKEY,                       XK_w,      spawn,          SHCMD ("$BROWSER") }, // Browser
+    { MODKEY|ShiftMask,             XK_w,      spawn,          SHCMD ("$BROWSER --incognito") }, // Browser
+    { MODKEY,                       XK_p,      spawn,          SHCMD ("arandr") }, // Display manager
+	{ MODKEY|ShiftMask,             XK_p,      togglescratch,  {.ui = 3 } }, // Scratchpad audio mixer
+    { MODKEY|ShiftMask,             XK_b,      spawn,          SHCMD (TERMINAL " -t bluetoothctl -e bluetoothctl") }, // Bluetooth manager
+    { MODKEY|ShiftMask,             XK_n,      spawn,          SHCMD ("dnm") }, // Network manager
+    { ControlMask|ShiftMask,        XK_Escape, spawn,          SHCMD (TERMINAL " -t htop -e htop") }, // Task manager
+    { MODKEY,                       XK_r,      spawn,          SHCMD (TERMINAL " -t $FILE -e $FILE") }, // File Manager
+	{ MODKEY|ShiftMask,             XK_r,      togglescratch,  {.ui = 1 } }, // Scratchpad file manager
+    { MODKEY,                       XK_m,      spawn,          SHCMD (TERMINAL " -t ncmpcpp -e ncmpcpp") }, // Music player
+    { MODKEY|ShiftMask,             XK_m,      spawn,          SHCMD (TERMINAL " -t neomutt -e neomutt") }, // Email client
+	{ MODKEY,                       XK_c,      togglescratch,  {.ui = 2 } }, // Scratchpad calculator
+	{ MODKEY|ShiftMask,             XK_c,      spawn,          SHCMD (TERMINAL " -t calcurse -e calcurse") }, // Calendar
+    { MODKEY,                       XK_v,      spawn,          SHCMD ("virt-manager") }, // Virtual machine manager
+
+    /* Other */
+    { MODKEY,                       XK_b,      spawn,          SHCMD ("bookmenu") }, // Bookmark menu
+    { MODKEY|ShiftMask,             XK_F1,     spawn,          SHCMD ("emojimenu") }, // Emoji menu
+    { MODKEY,                       XK_F4,     spawn,          SHCMD ("dmount") }, // USB mounter
+    { MODKEY|ShiftMask,             XK_F12,    spawn,          SHCMD ("powermenu") }, // Power menu
+    { MODKEY|ShiftMask,             XK_o,      spawn,          SHCMD ("colorswitcher") }, // Colorswitcher menu
+    { MODKEY,                       XK_Delete, spawn,          SHCMD ("togglecompositor") }, // Toggle compositor
+
+    /* Window management */
 	{ MODKEY|ShiftMask,             XK_i,      togglebar,      {0} }, // Toggle bar
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } }, // Focus downwards in the stack
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } }, // Focus upwards in the stack
-	{ MODKEY|ShiftMask,             XK_j,      incnmaster,     {.i = +1 } }, // Increase number of masters
-	{ MODKEY|ShiftMask,             XK_k,      incnmaster,     {.i = -1 } }, // Decrease number of masters
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} }, // Resize master window(s)
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} }, // Resize master window(s)
-	{ MODKEY|ShiftMask,             XK_h,      setcfact,       {.f = +0.25} }, // Resize focused window
-	{ MODKEY|ShiftMask,             XK_l,      setcfact,       {.f = -0.25} }, // Resize focused window
+	{ MODKEY|ShiftMask,             XK_h,      incnmaster,     {.i = +1 } }, // Increase number of masters
+	{ MODKEY|ShiftMask,             XK_l,      incnmaster,     {.i = -1 } }, // Decrease number of masters
+	{ MODKEY|ControlMask,           XK_h,      setcfact,       {.f = +0.25} }, // Resize focused window in the stack
+	{ MODKEY|ControlMask,           XK_l,      setcfact,       {.f = -0.25} }, // Resize focused window in the stack
 //	{ MODKEY|ShiftMask,             XK_o,      setcfact,       {.f =  0.00} },
 	{ MODKEY,                       XK_a,      zoom,           {0} }, // Bring focused window to master and back
     { MODKEY|ShiftMask,             XK_a,      focusmaster,    {0} }, // Focus master window and back
@@ -153,7 +229,7 @@ static Button buttons[] = {
 	{ ClkStatusText,        0,              Button5,        sigstatusbar,   {.i = 5} },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
-	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
+	{ ClkClientWin,         MODKEY,         Button1,        resizemouse,    {0} },
 	{ ClkTagBar,            0,              Button1,        view,           {0} },
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
