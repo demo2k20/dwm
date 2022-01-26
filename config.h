@@ -136,7 +136,7 @@ static Key keys[] = {
 
     /* Basic programs */
     { MODKEY,                       XK_w,      spawn,          SHCMD ("$BROWSER") }, // Browser
-    { MODKEY|ShiftMask,             XK_w,      spawn,          SHCMD ("$BROWSER --incognito") }, // Browser
+    { MODKEY|ShiftMask,             XK_w,      spawn,          SHCMD ("$BROWSER --incognito") }, // Incognito browser
     { MODKEY,                       XK_p,      spawn,          SHCMD ("arandr") }, // Display manager
 	{ MODKEY|ShiftMask,             XK_p,      togglescratch,  {.ui = 3 } }, // Scratchpad audio mixer
     { MODKEY|ShiftMask,             XK_b,      spawn,          SHCMD (TERMINAL " -t bluetoothctl -e bluetoothctl") }, // Bluetooth manager
@@ -154,7 +154,7 @@ static Key keys[] = {
     { MODKEY,                       XK_b,      spawn,          SHCMD ("bookmenu") }, // Bookmark menu
     { MODKEY|ShiftMask,             XK_F1,     spawn,          SHCMD ("emojimenu") }, // Emoji menu
     { MODKEY,                       XK_F4,     spawn,          SHCMD ("dmount") }, // USB mounter
-    { MODKEY|ShiftMask,             XK_F12,    spawn,          SHCMD ("powermenu") }, // Power menu
+    { MODKEY|ShiftMask,             XK_q,      spawn,          SHCMD ("powermenu") }, // Power menu
     { MODKEY|ShiftMask,             XK_o,      spawn,          SHCMD ("colorswitcher") }, // Colorswitcher menu
     { MODKEY,                       XK_Delete, spawn,          SHCMD ("togglecompositor") }, // Toggle compositor
 
@@ -168,7 +168,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_l,      incnmaster,     {.i = -1 } }, // Decrease number of masters
 	{ MODKEY|ControlMask,           XK_h,      setcfact,       {.f = +0.25} }, // Resize focused window in the stack
 	{ MODKEY|ControlMask,           XK_l,      setcfact,       {.f = -0.25} }, // Resize focused window in the stack
-//	{ MODKEY|ShiftMask,             XK_o,      setcfact,       {.f =  0.00} },
+//	{ MODKEY|ShiftMask,             XK_o,      setcfact,       {.f =  0.00} }, // Restore focused window in the stack to original size
 	{ MODKEY,                       XK_a,      zoom,           {0} }, // Bring focused window to master and back
     { MODKEY|ShiftMask,             XK_a,      focusmaster,    {0} }, // Focus master window and back
 	{ MODKEY,                       XK_q,      killclient,     {0} }, // Close focused window
@@ -229,7 +229,7 @@ static Button buttons[] = {
 	{ ClkStatusText,        0,              Button5,        sigstatusbar,   {.i = 5} },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
-	{ ClkClientWin,         MODKEY,         Button1,        resizemouse,    {0} },
+	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
 	{ ClkTagBar,            0,              Button1,        view,           {0} },
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
