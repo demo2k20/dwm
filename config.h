@@ -1,4 +1,6 @@
 /* See LICENSE file for copyright and license details. */
+
+/* Import XF86 library for binding functions keys */
 #include <X11/XF86keysym.h>
 
 /* Variables */
@@ -7,6 +9,7 @@
 /* appearance */
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
+static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const unsigned int gappih    = 20;       /* horiz inner gap between windows */
 static const unsigned int gappiv    = 10;       /* vert inner gap between windows */
 static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
@@ -40,27 +43,32 @@ const char *spcmd1[] = {TERMINAL, "-t", "spterm", "-g", "120x34", NULL };
 const char *spcmd2[] = {TERMINAL, "-t", "spfm", "-g", "144x41", "-e", "ranger", NULL };
 const char *spcmd3[] = {TERMINAL, "-t", "spcalc", "-g", "50x20", "-e", "bc", "-lq", NULL };
 const char *spcmd4[] = {TERMINAL, "-t", "spmix", "-g", "100x30", "-e", "pulsemixer", NULL };
+const char *spcmd5[] = {TERMINAL, "-t", "spmutt", "-g", "144x41", "-e", "neomutt", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
 	{"spranger",    spcmd2},
 	{"spcalc",      spcmd3},
 	{"spmix",       spcmd4},
+	{"spmutt",      spcmd5},
 };
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
-	/* class       instance    title         tags mask     isfloating   monitor */
-	{ "Steam",     NULL,       NULL,         0,            1,           -1 },
-	{ "zoom",      NULL,       NULL,         0,            1,           -1 },
-	{ "discord",   NULL,       NULL,         1 << 8,       0,           -1 },
-	{ "Element",   NULL,       NULL,         1 << 7,       0,           -1 },
-	{ NULL,        NULL,	   "spterm",     SPTAG(0),     1,           -1 },
-	{ NULL,        NULL,       "spfm",       SPTAG(1),     1,           -1 },
-	{ NULL,        NULL,       "spcalc",     SPTAG(2),     1,           -1 },
-	{ NULL,        NULL,       "spmix",      SPTAG(3),     1,           -1 },
+	/* class       instance    title           tags mask     isfloating  isterminal  noswallow  monitor */
+	{ "Steam",     NULL,       NULL,           0,            1,          0,          1,         -1 },
+	{ "zoom",      NULL,       NULL,           0,            1,          0,          1,         -1 },
+	{ "discord",   NULL,       NULL,           1 << 8,       0,          0,          1,         -1 },
+	{ NULL,        NULL,       "st",           0,            0,          1,          0,         -1 },
+	{ NULL,        NULL,	   "spterm",       SPTAG(0),     1,          1,          1,         -1 },
+	{ NULL,        NULL,       "spfm",         SPTAG(1),     1,          1,          1,         -1 },
+	{ NULL,        NULL,       "spcalc",       SPTAG(2),     1,          1,          1,         -1 },
+	{ NULL,        NULL,       "spmix",        SPTAG(3),     1,          1,          1,         -1 },
+	{ NULL,        NULL,       "spmutt",       SPTAG(4),     1,          1,          1,         -1 },
+	{ NULL,        NULL,       "Event Tester", 0,            0,          0,          1,         -1 }, /* xev */
+
 };
 
 /* layout(s) */
@@ -145,7 +153,8 @@ static Key keys[] = {
     { MODKEY,                       XK_r,      spawn,          SHCMD (TERMINAL " -t $FILE -e $FILE") }, // File Manager
 	{ MODKEY|ShiftMask,             XK_r,      togglescratch,  {.ui = 1 } }, // Scratchpad file manager
     { MODKEY,                       XK_m,      spawn,          SHCMD (TERMINAL " -t ncmpcpp -e ncmpcpp") }, // Music player
-    { MODKEY|ShiftMask,             XK_m,      spawn,          SHCMD (TERMINAL " -t neomutt -e neomutt") }, // Email client
+//  { MODKEY|ShiftMask,             XK_m,      spawn,          SHCMD (TERMINAL " -t neomutt -e neomutt") }, // Email client
+	{ MODKEY|ShiftMask,             XK_m,      togglescratch,  {.ui = 4 } }, // Scratchpad email client
 	{ MODKEY,                       XK_c,      togglescratch,  {.ui = 2 } }, // Scratchpad calculator
 	{ MODKEY|ShiftMask,             XK_c,      spawn,          SHCMD (TERMINAL " -t calcurse -e calcurse") }, // Calendar
     { MODKEY,                       XK_v,      spawn,          SHCMD ("virt-manager") }, // Virtual machine manager
