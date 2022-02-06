@@ -57,17 +57,18 @@ static Sp scratchpads[] = {
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
-	/* class       instance    title           tags mask     isfloating  isterminal  noswallow  monitor */
-	{ "Steam",     NULL,       NULL,           0,            1,          0,          1,         -1 },
-	{ "zoom",      NULL,       NULL,           0,            1,          0,          1,         -1 },
-	{ "discord",   NULL,       NULL,           1 << 8,       0,          0,          1,         -1 },
-	{ NULL,        NULL,       "st",           0,            0,          1,          0,         -1 },
-	{ NULL,        NULL,	   "spterm",       SPTAG(0),     1,          1,          1,         -1 },
-	{ NULL,        NULL,       "spfm",         SPTAG(1),     1,          1,          1,         -1 },
-	{ NULL,        NULL,       "spcalc",       SPTAG(2),     1,          1,          1,         -1 },
-	{ NULL,        NULL,       "spmix",        SPTAG(3),     1,          1,          1,         -1 },
-	{ NULL,        NULL,       "spmutt",       SPTAG(4),     1,          1,          1,         -1 },
-	{ NULL,        NULL,       "Event Tester", 0,            0,          0,          1,         -1 }, /* xev */
+	/* class                  instance    title           tags mask     isfloating  isterminal  noswallow  monitor */
+	{ "Steam",                NULL,       NULL,           0,            1,          0,          1,         -1 }, /* steam */
+	{ "zoom",                 NULL,       NULL,           0,            1,          0,          1,         -1 }, /* zoom */
+	{ "discord",              NULL,       NULL,           1 << 8,       0,          0,          1,         -1 }, /* discord */
+	{ NULL,                   NULL,       "st",           0,            0,          1,          0,         -1 }, /* regular terminal */
+	{ NULL,                   NULL,	      "spterm",       SPTAG(0),     1,          1,          1,         -1 }, /* scratchpad terminal */
+	{ NULL,                   NULL,       "spfm",         SPTAG(1),     1,          1,          1,         -1 }, /* scratchpad terminal */
+	{ NULL,                   NULL,       "spcalc",       SPTAG(2),     1,          1,          1,         -1 }, /* scratchpad terminal */
+	{ NULL,                   NULL,       "spmix",        SPTAG(3),     1,          1,          1,         -1 }, /* scratchpad terminal */
+	{ NULL,                   NULL,       "spmutt",       SPTAG(4),     1,          1,          1,         -1 }, /* scratchpad terminal */
+	{ NULL,                   NULL,       "Event Tester", 0,            0,          0,          1,         -1 }, /* xev */
+	{ "Dragon-drag-and-drop", NULL,       NULL,           0,            0,          0,          1,         -1 }, /* dragon */
 
 };
 
