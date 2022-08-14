@@ -18,7 +18,7 @@ static       int smartgaps          = 0;        /* 1 means no outer gap when the
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const int user_bh            = 16;       /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
-static const char *fonts[]          = { "Terminus:size=8" , "Font Awesome 5 Free Solid:size=8" , "JoyPixels:size=8" };
+static const char *fonts[]          = { "Terminus:size=8" , "Font Awesome 6 Free Solid:size=8" , "JoyPixels:size=8" };
 static char normbgcolor[]           = "#222222";
 static char urgentbgcolor[]         = "#ff0000";
 static char normbordercolor[]       = "#444444";
